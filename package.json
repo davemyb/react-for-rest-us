@@ -1,7 +1,7 @@
 {
   "name": "complex-react-app",
   "version": "1.0.0",
-  "description": "",
+  "description": "React for the rest of us course",
   "main": "test.js",
   "scripts": {
     "dev": "webpack-dev-server",
