@@ -18,9 +18,11 @@ function Profile () {
 
   // Empty array at the end of useEffect means only run this once.
   useEffect(() => {
+    const ourRequest = Axios.CancelToken.source()
+
     async function fetchData () {
       try {
-        const response = await Axios.post(`/profile/${username}`, { token: appState.user.token })
+        const response = await Axios.post(`/profile/${username}`, { token: appState.user.token }, { cancelToken: ourRequest.token })
         setProfileData(response.data)
         console.log(response.data)
       } catch (e) {
@@ -28,6 +30,9 @@ function Profile () {
       }
     }
     fetchData()
+    return () => {
+      ourRequest.cancel()
+    }
   }, [])
 
   return (
