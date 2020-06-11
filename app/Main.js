@@ -55,9 +55,8 @@ function Main () {
       window.localStorage.setItem('complexappToken', state.user.token)
       window.localStorage.setItem('complexappUsername', state.user.username)
       window.localStorage.setItem('complexappAvatar', state.user.avatar)
-    }
-    // Else they logged out.
-    else {
+    } else {
+      // Else they logged out.
       window.localStorage.removeItem('complexappToken')
       window.localStorage.removeItem('complexappUsername')
       window.localStorage.removeItem('complexappAvatar')

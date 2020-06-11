@@ -46,7 +46,7 @@ function ViewSinglePost () {
           </Link>
           <ReactTooltip id='edit' className='custom-dash-tooltip' />
           {' '}
-          <Link data-tip='Delete' data-for='delete' className='delete-post-button text-danger'>
+          <Link to={`/post/${post._id}/delete`} data-tip='Delete' data-for='delete' className='delete-post-button text-danger'>
             <i className='fas fa-trash' />
           </Link>
           <ReactTooltip id='delete' className='custom-dash-tooltip' />
@@ -61,7 +61,7 @@ function ViewSinglePost () {
       </p>
 
       <div className='body-content'>
-        <ReactMarkdown source={post.body} allowedTypes={['paragraph', 'strong', 'emphasis', 'text', 'headings', 'list', 'listitem']} />
+        <ReactMarkdown source={post.body} allowedTypes={['paragraph', 'strong', 'emphasis', 'text', 'heading', 'list', 'listItem']} />
       </div>
     </Page>
   )
