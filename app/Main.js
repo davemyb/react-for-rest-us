@@ -98,7 +98,7 @@ function Main () {
             <Route path='/create-post' exact>
               <CreatePost />
             </Route>
-            <Route path='/profile/:username' exact>
+            <Route path='/profile/:username'>
               <Profile />
             </Route>
             <Route>
