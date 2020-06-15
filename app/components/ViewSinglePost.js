@@ -34,7 +34,8 @@ function ViewSinglePost (props) {
     return () => {
       ourRequest.cancel()
     }
-  }, [])
+    // Dependency is [id] so that Axios request gets sent if you change post id e.g. from search results.
+  }, [id])
 
   if (!isLoading && !post) {
     return (
@@ -82,7 +83,7 @@ function ViewSinglePost (props) {
             </Link>
             <ReactTooltip id='edit' className='custom-dash-tooltip' />
             {' '}
-            <Link onClick={deleteHandler} data-tip='Delete' data-for='delete' className='delete-post-button text-danger'>
+            <Link onClick={deleteHandler} to='#' data-tip='Delete' data-for='delete' className='delete-post-button text-danger'>
               <i className='fas fa-trash' />
             </Link>
             <ReactTooltip id='delete' className='custom-dash-tooltip' />
