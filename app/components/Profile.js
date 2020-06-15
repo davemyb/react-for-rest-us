@@ -33,7 +33,7 @@ function Profile () {
         setState(draft => {
           draft.profileData = response.data
         })
-        console.log(response.data)
+        // console.log(response.data)
       } catch (e) {
         console.log(e.response.data)
       }
@@ -60,7 +60,7 @@ function Profile () {
             draft.profileData.counts.followerCount++
             draft.followActionLoading = false
           })
-          console.log(response.data)
+          // console.log(response.data)
         } catch (e) {
           console.log(e.response.data)
         }
@@ -88,7 +88,7 @@ function Profile () {
             draft.profileData.counts.followerCount--
             draft.followActionLoading = false
           })
-          console.log(response.data)
+          // console.log(response.data)
         } catch (e) {
           console.log(e.response.data)
         }

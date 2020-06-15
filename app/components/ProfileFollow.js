@@ -6,23 +6,23 @@ import LoadingDotsIcon from './LoadingDotsIcon'
 
 function ProfileFollowers (props) {
   const [isLoading, setIsLoading] = useState(true)
-  const [posts, setPosts] = useState([])
+  const [followers, setFollowers] = useState([])
   const { username } = useParams()
 
   useEffect(() => {
     const ourRequest = Axios.CancelToken.source()
 
-    async function fetchPosts () {
+    async function fetchFollowers () {
       try {
         const response = await Axios.get(`/profile/${username}/${props.action}`, { cancelToken: ourRequest.token })
-        setPosts(response.data)
+        setFollowers(response.data)
         setIsLoading(false)
-        console.log(response.data)
+        // console.log(response.data)
       } catch (e) {
         console.log(e.response.data)
       }
     }
-    fetchPosts()
+    fetchFollowers()
     return () => {
       ourRequest.cancel()
     }
@@ -32,7 +32,15 @@ function ProfileFollowers (props) {
 
   return (
     <div className='list-group'>
-      {posts.map((follower, index) => {
+      {!followers.length && props.action === 'followers' && (
+        <p className='alert alert-warning text-center shadow-sm'>You have no followers yet.</p>
+      )}
+
+      {!followers.length && props.action === 'following' && (
+        <p className='alert alert-warning text-center shadow-sm'>You are not following anyone yet.</p>
+      )}
+
+      {followers.map((follower, index) => {
         return (
           <Link key={index} to={`/profile/${follower.username}`} className='list-group-item list-group-item-action'>
             <img className='avatar-tiny' src={follower.avatar} /> {follower.username}
