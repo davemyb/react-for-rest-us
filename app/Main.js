@@ -88,6 +88,29 @@ function Main () {
     }
   }, [state.loggedIn])
 
+  // Check if server token is still valid on first render of app.
+  useEffect(() => {
+    if (state.loggedIn) {
+      // Send Axios request.
+      const ourRequest = Axios.CancelToken.source()
+      /* eslint-disable no-inner-declarations */
+      async function fetchResults () {
+        try {
+          const response = await Axios.post('/checkToken', { token: state.user.token }, { cancelToken: ourRequest.token })
+          if (!response.data) {
+            dispatch({ type: 'logout' })
+            dispatch({ type: 'flashMessage', value: 'Your session has expired, please log in again.' })
+          }
+        } catch (e) {
+          console.log(e.response.data)
+        }
+      }
+
+      fetchResults()
+      return () => ourRequest.cancel()
+    }
+  }, [])
+
   return (
     <StateContext.Provider value={state}>
       <DispatchContext.Provider value={dispatch}>
