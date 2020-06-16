@@ -12,6 +12,7 @@ function HeaderLoggedIn (props) {
   function handleLogout () {
     // Unset the State variable for logged in.
     appDispatch({ type: 'logout' })
+    appDispatch({ type: 'flashMessage', value: 'You have successfully logged out.' })
   }
 
   function handleSearchIcon (e) {

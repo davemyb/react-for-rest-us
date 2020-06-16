@@ -15,7 +15,9 @@ function HeaderLoggedOut (props) {
       if (response.data) {
         // Use LocalStorage to persist the login data.
         appDispatch({ type: 'login', data: response.data })
+        appDispatch({ type: 'flashMessage', value: 'You have successfully logged in.' })
       } else {
+        appDispatch({ type: 'flashMessage', value: 'Incorrect username/passwords.' })
         console.log('Incorrect username/password.')
       }
     } catch (e) {
