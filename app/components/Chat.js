@@ -9,6 +9,7 @@ const socket = io('http://localhost:8081')
 
 function Chat () {
   const chatField = useRef(null)
+  const chatLog = useRef(null)
   const appState = useContext(StateContext)
   const appDispatch = useContext(DispatchContext)
   const [state, setState] = useImmer({
@@ -20,8 +21,19 @@ function Chat () {
   useEffect(() => {
     if (appState.isChatOpen) {
       chatField.current.focus()
+      appDispatch({ type: 'clearUnreadChatCount' })
     }
   }, [appState.isChatOpen])
+
+  useEffect(() => {
+    // Scroll chat log to bottom, so most recent is always visible.
+    // Triggers on any new message.
+    chatLog.current.scrollTop = chatLog.current.scrollHeight
+    // Add to unread counter if messages and chat is closed.
+    if (state.chatMessages.length && !appState.isChatOpen) {
+      appDispatch({ type: 'incrementUnreadChatCount' })
+    }
+  }, [state.chatMessages])
 
   useEffect(() => {
     // Receive messages from chat server and add to state.
@@ -63,7 +75,7 @@ function Chat () {
           <i className='fas fa-times-circle' />
         </span>
       </div>
-      <div id='chat' className='chat-log'>
+      <div ref={chatLog} id='chat' className='chat-log'>
         {state.chatMessages.map((message, index) => {
           if (message.username === appState.user.username) {
             return (
@@ -78,14 +90,14 @@ function Chat () {
 
           return (
             <div key={index} className='chat-other'>
-              <a href='#'>
+              <Link to={`/profile/${message.username}`}>
                 <img className='avatar-tiny' src={message.avatar} />
-              </a>
+              </Link>
               <div className='chat-message'>
                 <div className='chat-message-inner'>
-                  <a href='#'>
+                  <Link to={`/profile/${message.username}`}>
                     <strong>{message.username}: </strong>
-                  </a>
+                  </Link>
                   {message.message}
                 </div>
               </div>
