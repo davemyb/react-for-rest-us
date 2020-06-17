@@ -27,7 +27,7 @@ const Search = React.lazy(() => import('./components/Search'))
 const ViewSinglePost = React.lazy(() => import('./components/ViewSinglePost'))
 const CreatePost = React.lazy(() => import('./components/CreatePost'))
 
-Axios.defaults.baseURL = 'http://localhost:8081'
+Axios.defaults.baseURL = process.env.BACKENDURL || ''
 
 function Main () {
   const initialState = {
