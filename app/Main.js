@@ -18,9 +18,11 @@ import FlashMessages from './components/FlashMessages'
 import Profile from './components/Profile'
 import EditPost from './components/EditPost'
 import NotFound from './components/NotFound'
-import Search from './components/Search'
-import Chat from './components/Chat'
 import LoadingDotsIcon from './components/LoadingDotsIcon'
+// import Chat from './components/Chat'
+const Chat = React.lazy(() => import('./components/Chat'))
+// import Search from './components/Search'
+const Search = React.lazy(() => import('./components/Search'))
 // Lazy-load bigger components, or ones not used often at all. Uses 'Suspense'
 const ViewSinglePost = React.lazy(() => import('./components/ViewSinglePost'))
 const CreatePost = React.lazy(() => import('./components/CreatePost'))
@@ -148,9 +150,15 @@ function Main () {
             </Switch>
           </Suspense>
           <CSSTransition timeout={330} in={state.isSearchOpen} classNames='search-overlay' unmountOnExit>
-            <Search />
+            <div className='search-overlay'>
+              <Suspense fallback=''>
+                <Search />
+              </Suspense>
+            </div>
           </CSSTransition>
-          <Chat />
+          <Suspense fallback=''>
+            {state.loggedIn && <Chat />}
+          </Suspense>
           <Footer />
         </BrowserRouter>
       </DispatchContext.Provider>
