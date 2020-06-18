@@ -27,7 +27,7 @@ const Search = React.lazy(() => import('./components/Search'))
 const ViewSinglePost = React.lazy(() => import('./components/ViewSinglePost'))
 const CreatePost = React.lazy(() => import('./components/CreatePost'))
 
-Axios.defaults.baseURL = process.env.BACKENDURL || ''
+Axios.defaults.baseURL = process.env.BACKENDURL || 'https://react-for-us.herokuapp.com'
 
 function Main () {
   const initialState = {
