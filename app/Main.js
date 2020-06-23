@@ -53,7 +53,10 @@ function Main () {
         draft.loggedIn = false
         break
       case 'flashMessage':
-        draft.flashMessages.push(action.value)
+        // When only one element is being sent, no {} are needed and action.value
+        // does not need a key. When multiple elements are present, each needs a
+        // key.
+        draft.flashMessages.push({ message: action.value, style: action.style })
         break
       case 'openSearch':
         draft.isSearchOpen = true

@@ -93,7 +93,7 @@ function EditPost (props) {
         if (response.data) {
           dispatch({ type: 'fetchComplete', value: response.data })
           if (appState.user.username !== response.data.author.username) {
-            appDispatch({ type: 'flashMessage', value: 'You don\'t have permission to edit that post.' })
+            appDispatch({ type: 'flashMessage', value: 'You don\'t have permission to edit that post.', style: 'danger' })
             // Redirect to home page if access denied.
             props.history.push('/')
           }

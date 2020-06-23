@@ -26,7 +26,7 @@ function HeaderLoggedOut (props) {
 
         if (!draft.username.value.length) {
           draft.username.hasErrors = true
-          appDispatch({ type: 'flashMessage', value: 'You need to enter a username.' })
+          appDispatch({ type: 'flashMessage', value: 'You need to enter a username.', style: 'danger' })
         }
         break
       case 'passwordVerify':
@@ -35,14 +35,14 @@ function HeaderLoggedOut (props) {
 
         if (!draft.password.value.length) {
           draft.password.hasErrors = true
-          appDispatch({ type: 'flashMessage', value: 'You need to enter a password.' })
+          appDispatch({ type: 'flashMessage', value: 'You need to enter a password.', style: 'danger' })
         }
         break
       case 'submitForm':
         if (!draft.username.hasErrors && !draft.password.hasErrors) {
           draft.submitCount++
         } else if (draft.username.hasErrors && draft.password.hasErrors) {
-          appDispatch({ type: 'flashMessage', value: 'You need to enter a username and password.' })
+          appDispatch({ type: 'flashMessage', value: 'You need to enter a username and password.', style: 'danger' })
         }
         break
     }
@@ -61,7 +61,7 @@ function HeaderLoggedOut (props) {
           appDispatch({ type: 'login', data: response.data })
           appDispatch({ type: 'flashMessage', value: 'You have successfully logged in.' })
         } catch (e) {
-          appDispatch({ type: 'flashMessage', value: 'Incorrect username/passwords.' })
+          appDispatch({ type: 'flashMessage', value: 'Incorrect username/passwords.', style: 'danger' })
           console.log(e.response.data)
         }
       }
