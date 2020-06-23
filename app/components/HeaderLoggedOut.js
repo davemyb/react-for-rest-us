@@ -1,38 +1,91 @@
-import React, { useState, useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import Axios from 'axios'
 import DispatchContext from '../DispatchContext'
+import { useImmerReducer } from 'use-immer'
 
 function HeaderLoggedOut (props) {
-  const [username, setUsername] = useState()
-  const [password, setPassword] = useState()
   const appDispatch = useContext(DispatchContext)
+
+  const initialLoginState = {
+    username: {
+      value: '',
+      hasErrors: false
+    },
+    password: {
+      value: '',
+      hasErrors: false
+    },
+    submitCount: 0
+  }
+
+  function loginReducer (draft, action) {
+    switch (action.type) {
+      case 'usernameVerify':
+        draft.username.hasErrors = false
+        draft.username.value = action.value
+
+        if (!draft.username.value.length) {
+          draft.username.hasErrors = true
+          appDispatch({ type: 'flashMessage', value: 'You need to enter a username.' })
+        }
+        break
+      case 'passwordVerify':
+        draft.password.hasErrors = false
+        draft.password.value = action.value
+
+        if (!draft.password.value.length) {
+          draft.password.hasErrors = true
+          appDispatch({ type: 'flashMessage', value: 'You need to enter a password.' })
+        }
+        break
+      case 'submitForm':
+        if (!draft.username.hasErrors && !draft.password.hasErrors) {
+          draft.submitCount++
+        } else if (draft.username.hasErrors && draft.password.hasErrors) {
+          appDispatch({ type: 'flashMessage', value: 'You need to enter a username and password.' })
+        }
+        break
+    }
+  }
+
+  const [state, dispatch] = useImmerReducer(loginReducer, initialLoginState)
+
+  useEffect(() => {
+    if (state.submitCount) {
+      // Send Axios request if submitCount is non-zero.
+      const loginRequest = Axios.CancelToken.source()
+      /* eslint-disable no-inner-declarations */
+      async function fetchResults () {
+        try {
+          const response = await Axios.post('/login', { username: state.username.value, password: state.password.value }, { cancelToken: loginRequest.token })
+          appDispatch({ type: 'login', data: response.data })
+          appDispatch({ type: 'flashMessage', value: 'You have successfully logged in.' })
+        } catch (e) {
+          appDispatch({ type: 'flashMessage', value: 'Incorrect username/passwords.' })
+          console.log(e.response.data)
+        }
+      }
+
+      fetchResults()
+      return () => loginRequest.cancel()
+    }
+  }, [state.submitCount])
 
   async function handleSubmit (e) {
     e.preventDefault()
-    try {
-      const response = await Axios.post('/login', { username, password })
-      // If there is a valid login, you get an object back. Otherwise it's "false".
-      if (response.data) {
-        // Use LocalStorage to persist the login data.
-        appDispatch({ type: 'login', data: response.data })
-        appDispatch({ type: 'flashMessage', value: 'You have successfully logged in.' })
-      } else {
-        appDispatch({ type: 'flashMessage', value: 'Incorrect username/passwords.' })
-        console.log('Incorrect username/password.')
-      }
-    } catch (e) {
-      console.log(e.response.data)
-    }
+    dispatch({ type: 'usernameVerify', value: state.username.value })
+    dispatch({ type: 'passwordVerify', value: state.password.value })
+    dispatch({ type: 'submitForm' })
   }
 
   return (
     <form onSubmit={handleSubmit} className='mb-0 pt-2 pt-md-0'>
       <div className='row align-items-center'>
         <div className='col-md mr-0 pr-md-0 mb-3 mb-md-0'>
-          <input onChange={e => setUsername(e.target.value)} name='username' className='form-control form-control-sm input-dark' type='text' placeholder='Username' autoComplete='off' />
+          <input onChange={e => dispatch({ type: 'usernameVerify', value: e.target.value })} name='username' className={'form-control form-control-sm input-dark ' + (state.username.hasErrors ? 'is-invalid' : '')} type='text' placeholder='Username' autoComplete='off' />
         </div>
         <div className='col-md mr-0 pr-md-0 mb-3 mb-md-0'>
-          <input onChange={e => setPassword(e.target.value)} name='password' className='form-control form-control-sm input-dark' type='password' placeholder='Password' />
+          <input onChange={e => dispatch({ type: 'passwordVerify', value: e.target.value })} name='password' className={'form-control form-control-sm input-dark ' + (state.password.hasErrors ? 'is-invalid' : '')} type='password' placeholder='Password' />
         </div>
         <div className='col-md-auto'>
           <button className='btn btn-success btn-sm'>Sign In</button>
