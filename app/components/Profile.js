@@ -7,6 +7,7 @@ import StateContext from '../StateContext'
 import Page from './Page'
 import ProfilePosts from './ProfilePosts'
 import ProfileFollow from './ProfileFollow'
+import NotFound from './NotFound'
 
 function Profile () {
   const { username } = useParams()
@@ -20,10 +21,12 @@ function Profile () {
       profileAvatar: 'https://gravatar.com/avatar/placeholder?s=128',
       isFollowing: false,
       counts: { postCount: '', followerCount: '', followingCount: '' }
-    }
+    },
+    invalidProfile: false
   })
 
-  // Empty array at the end of useEffect means only run this once.
+  // Empty array at the end of useEffect means only run this once. This one reruns
+  // when username is changed e.g. in the url.
   useEffect(() => {
     const ourRequest = Axios.CancelToken.source()
 
@@ -31,7 +34,11 @@ function Profile () {
       try {
         const response = await Axios.post(`/profile/${username}`, { token: appState.user.token }, { cancelToken: ourRequest.token })
         setState(draft => {
-          draft.profileData = response.data
+          if (!response.data) {
+            draft.invalidProfile = true
+          } else {
+            draft.profileData = response.data
+          }
         })
         // console.log(response.data)
       } catch (e) {
@@ -49,11 +56,13 @@ function Profile () {
       setState(draft => {
         draft.followActionLoading = true
       })
+
       const ourRequest = Axios.CancelToken.source()
 
       /* eslint-disable no-inner-declarations */
       async function fetchData () {
         try {
+          /* eslint-disable no-unused-vars */
           const response = await Axios.post(`/addFollow/${state.profileData.profileUsername}`, { token: appState.user.token }, { cancelToken: ourRequest.token })
           setState(draft => {
             draft.profileData.isFollowing = true
@@ -77,6 +86,7 @@ function Profile () {
       setState(draft => {
         draft.followActionLoading = true
       })
+
       const ourRequest = Axios.CancelToken.source()
 
       /* eslint-disable no-inner-declarations */
@@ -110,6 +120,14 @@ function Profile () {
     setState(draft => {
       draft.stopFollowingRequestCount++
     })
+  }
+
+  if (state.invalidProfile) {
+    return (
+      <Page title='Profile not found!'>
+        <NotFound />
+      </Page>
+    )
   }
 
   return (
